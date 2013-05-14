@@ -1,0 +1,3 @@
+twisteddicom
+twisted>=13.0.0
+dicom>=0.9.8
