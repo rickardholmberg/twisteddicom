@@ -23,7 +23,7 @@
 
 import dicom
 from twisteddicom import dimse, dimsemessages
-from twisteddicom.utils import get_uid, match
+from twisteddicom.utils import get_uid, match_dataset
 from twisted.python import log
 import os
 import glob
@@ -58,13 +58,7 @@ class FindSCP(dimse.DIMSEProtocol):
                 log.err(e)
                 continue
             
-            result_ds = dicom.dataset.Dataset()
-            is_match = True
-            for key in query.iterkeys():
-                if key not in ds or not match(query[key].value, ds[key].value):
-                    is_match = False
-                    break
-                result_ds[key] = ds[key]
+            is_match, result_ds = match_dataset(query, ds)
             if not is_match:
                 continue
             self.send_DIMSE_command(presentation_context_id,
