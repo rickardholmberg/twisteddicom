@@ -40,6 +40,10 @@ nosetests.xml
 # etags
 TAGS
 
+# emacs
+\#*\#
+.\#*
+
 # project stuff
 .ropeproject
 _trial_temp*
