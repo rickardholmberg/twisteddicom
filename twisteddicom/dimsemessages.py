@@ -238,7 +238,23 @@ class C_GET_RSP(DIMSEMessage):
         ds.MessageIDBeingRespondedTo = self.message_id_being_responded_to
         ds.CommandDataSetType = 0x01 if self.data_set_present else 0x0101
         ds.Status = self.status
-        ds.NumberofRemainingSuboperations = self.number_of_remaining_sub_operations
+        if self.status & 0xFF00 == 0xFF00:
+            # Pending must contain number of remaining subitems
+            ds.NumberofRemainingSuboperations = self.number_of_remaining_sub_operations
+        elif self.status == 0xFE00: # Cancelled
+            # may have remaining subops
+            ds.NumberofRemainingSuboperations = self.number_of_remaining_sub_operations            
+        elif (self.status == 0xA701 or # Failure
+            self.status == 0xA702 or # Failure
+            self.status == 0xA801 or # Failure
+            self.status == 0xA900 or # Failure
+            self.status & 0xFF00 == 0xC000 or # Failure
+            self.status == 0xB000 or # Warning
+            self.status == 0x0000): # Success
+            pass # Required _not_ to have remaining subops
+        else:
+            # Unknown status
+            pass
         ds.NumberofCompletedSuboperations = self.number_of_completed_sub_operations
         ds.NumberofFailedSuboperations = self.number_of_failed_sub_operations
         ds.NumberofWarningSuboperations = self.number_of_warning_sub_operations

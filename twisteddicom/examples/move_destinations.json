@@ -1,0 +1,4 @@
+{
+    "LOCALHOST": { "host": "127.0.0.1", "port": 1040, "calling_ae_title": "TWISTMOVESCP" },
+    "MOVESCU": { "host": "127.0.0.1", "port": 11112, "calling_ae_title": "TWISTMOVESCP" }
+}
