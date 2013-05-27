@@ -36,8 +36,7 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 
 class QRSCP(dimse.DIMSEProtocol):
     def __init__(self, folder, move_destinations):
-        super(QRSCP, self).__init__(is_association_requestor = False, 
-                                    supported_abstract_syntaxes = [
+        super(QRSCP, self).__init__(supported_abstract_syntaxes = [
                                         get_uid("Patient Root Query/Retrieve Information Model - FIND"),
                                         get_uid("Patient Root Query/Retrieve Information Model - MOVE"),
                                         get_uid("Study Root Query/Retrieve Information Model - FIND"),

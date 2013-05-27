@@ -131,6 +131,7 @@ class DIMSEMessage(object):
 
     
 class C_STORE_RQ(DIMSEMessage):
+    """See DICOM PS3.7-2011 9.3.1.1"""
     def __init__(self, move_originator_application_entity_title = None, move_originator_message_id = None, 
                  priority = Priority.LOW, message_id = 0, 
                  affected_sop_instance_uid = "", affected_sop_class_uid = ""):
@@ -167,6 +168,7 @@ class C_STORE_RQ(DIMSEMessage):
         self.affected_sop_class_uid = ds.AffectedSOPClassUID
 
 class C_STORE_RSP(DIMSEMessage):
+    """See DICOM PS3.7-2011 9.3.1.2"""
     def __init__(self, message_id_being_responded_to = 0, 
                  affected_sop_class_uid = "", affected_sop_instance_uid = "", 
                  status = 0):
@@ -220,8 +222,8 @@ class C_GET_RSP(DIMSEMessage):
     """See DICOM PS3.7-2011 9.3.3.2"""
     def __init__(self, affected_sop_class_uid = "", message_id_being_responded_to = 0, 
                  data_set_present = False, status = 0,
-                 number_of_remaining_sub_operations = 0, number_of_completed_sub_operations = 0, 
-                 number_of_failed_sub_operations = 0, number_of_warning_sub_operations = 0):
+                 number_of_remaining_sub_operations = None, number_of_completed_sub_operations = None, 
+                 number_of_failed_sub_operations = None, number_of_warning_sub_operations = None):
         self.affected_sop_class_uid = affected_sop_class_uid
         self.message_id_being_responded_to = message_id_being_responded_to
         self.data_set_present = data_set_present
@@ -238,26 +240,14 @@ class C_GET_RSP(DIMSEMessage):
         ds.MessageIDBeingRespondedTo = self.message_id_being_responded_to
         ds.CommandDataSetType = 0x01 if self.data_set_present else 0x0101
         ds.Status = self.status
-        if self.status & 0xFF00 == 0xFF00:
-            # Pending must contain number of remaining subitems
+        if self.number_of_remaining_sub_operations != None:
             ds.NumberofRemainingSuboperations = self.number_of_remaining_sub_operations
-        elif self.status == 0xFE00: # Cancelled
-            # may have remaining subops
-            ds.NumberofRemainingSuboperations = self.number_of_remaining_sub_operations            
-        elif (self.status == 0xA701 or # Failure
-            self.status == 0xA702 or # Failure
-            self.status == 0xA801 or # Failure
-            self.status == 0xA900 or # Failure
-            self.status & 0xFF00 == 0xC000 or # Failure
-            self.status == 0xB000 or # Warning
-            self.status == 0x0000): # Success
-            pass # Required _not_ to have remaining subops
-        else:
-            # Unknown status
-            pass
-        ds.NumberofCompletedSuboperations = self.number_of_completed_sub_operations
-        ds.NumberofFailedSuboperations = self.number_of_failed_sub_operations
-        ds.NumberofWarningSuboperations = self.number_of_warning_sub_operations
+        if self.number_of_completed_sub_operations != None:
+            ds.NumberofCompletedSuboperations = self.number_of_completed_sub_operations
+        if self.number_of_failed_sub_operations != None:
+            ds.NumberofFailedSuboperations = self.number_of_failed_sub_operations
+        if self.number_of_warning_sub_operations != None:
+            ds.NumberofWarningSuboperations = self.number_of_warning_sub_operations
         return pack_dataset_with_commandgrouplength(ds)
 
     def unpack(self, ds):
@@ -266,10 +256,10 @@ class C_GET_RSP(DIMSEMessage):
         self.message_id_being_responded_to = ds.MessageIDBeingRespondedTo
         self.data_set_present = (ds.CommandDataSetType != 0x0101)
         self.status = ds.Status
-        self.number_of_remaining_sub_operations = ds.NumberofRemainingSuboperations
-        self.number_of_completed_sub_operations = ds.NumberofCompletedSuboperations
-        self.number_of_failed_sub_operations = ds.NumberofFailedSuboperations
-        self.number_of_warning_sub_operations = ds.NumberofWarningSuboperations
+        self.number_of_remaining_sub_operations = getattr(ds, 'NumberofRemainingSuboperations', None)
+        self.number_of_completed_sub_operations = getattr(ds, 'NumberofCompletedSuboperations', None)
+        self.number_of_failed_sub_operations = getattr(ds, 'NumberofFailedSuboperations', None)
+        self.number_of_warning_sub_operations = getattr(ds, 'NumberofWarningSuboperations', None)
 
 class C_FIND_RQ(DIMSEMessage):
     """See DICOM PS3.7-2011 9.3.2.1"""
@@ -753,7 +743,7 @@ class N_DELETE_RSP(DIMSEMessage):
         self.status = ds.Status
 
 class C_CANCEL_RQ(DIMSEMessage):
-    """See DICOM PS3.7-2011 9.3.5.1"""
+    """See DICOM PS3.7-2011 9.3.2.3, 9.3.3.3 and 9.3.4.3"""
     def __init__(self, message_id_being_responded_to = 0):
         self.message_id_being_responded_to = message_id_being_responded_to
 

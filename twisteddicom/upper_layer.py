@@ -49,13 +49,12 @@ class InvalidStateError(RuntimeError):
 
 class DICOMUpperLayerServiceProvider(sockhandler.DICOMUpperLayerServiceProtocol):
     """Handles the DICOM Upper Layer state machine and presents DICOM Upper Layer indications messages. See DICOM PS3.8-2011 9.2, esp table 9-10."""
-    def __init__(self, is_association_requestor, supported_abstract_syntaxes = None, supported_transfer_syntaxes = None):
-        """conn is the socket connection, is_association_requestor is a boolean indicating wether the local host initiated the connection"""
+    def __init__(self, supported_abstract_syntaxes = None, supported_transfer_syntaxes = None):
         super(DICOMUpperLayerServiceProvider, self).__init__()
         self.reject_reason = None
         self.reject_source = None
         self.reject_result = None
-        self.is_association_requestor = is_association_requestor
+        self.is_association_requestor = True # Until we se an association request
         self.state = 1
         self.ARTIM_time = 10.0
         self.ARTIM = None
@@ -180,6 +179,7 @@ class DICOMUpperLayerServiceProvider(sockhandler.DICOMUpperLayerServiceProtocol)
     @debugrecv
     def A_ASSOCIATE_RQ_PDU_received(self, data):
         if self.state == 2:
+            self.is_association_requestor = False
             acceptable = self.is_acceptable(data)
             if acceptable:
                 self.setstate(3)

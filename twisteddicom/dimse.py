@@ -36,11 +36,10 @@ def debugindicate(func):
 
 
 class DIMSEProtocol(upper_layer.DICOMUpperLayerServiceProvider):
-    def __init__(self, is_association_requestor, 
+    def __init__(self, 
                  supported_abstract_syntaxes = None, 
                  supported_transfer_syntaxes = None):
-        super(DIMSEProtocol, self).__init__(is_association_requestor = is_association_requestor, 
-                                            supported_abstract_syntaxes = supported_abstract_syntaxes, 
+        super(DIMSEProtocol, self).__init__(supported_abstract_syntaxes = supported_abstract_syntaxes, 
                                             supported_transfer_syntaxes = supported_transfer_syntaxes)
         self.dimse_is_reading_command = True
         self.dimse_command_buffer = ""

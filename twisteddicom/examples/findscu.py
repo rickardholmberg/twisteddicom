@@ -28,8 +28,7 @@ from twisted.python import log
 
 class FindSCU(dimse.DIMSEProtocol):
     def __init__(self, tags):
-        super(FindSCU, self).__init__(is_association_requestor = True, 
-                                      supported_abstract_syntaxes = [get_uid("Patient Root Query/Retrieve Information Model - FIND")])
+        super(FindSCU, self).__init__(supported_abstract_syntaxes = [get_uid("Patient Root Query/Retrieve Information Model - FIND")])
         self.query = dicom.dataset.Dataset()
         for key, value in tags.iteritems():
             setattr(self.query, key, value)

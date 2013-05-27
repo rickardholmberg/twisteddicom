@@ -111,8 +111,7 @@ supported_abstract_syntaxes = [
 
 class StoreSCP(dimse.DIMSEProtocol):
     def __init__(self):
-        super(StoreSCP, self).__init__(is_association_requestor = False, 
-                                       supported_abstract_syntaxes = supported_abstract_syntaxes)
+        super(StoreSCP, self).__init__(supported_abstract_syntaxes = supported_abstract_syntaxes)
 
     def C_ECHO_RQ_received(self, presentation_context_id, echo_rq, dimse_data):
         log.msg("received DIMSE command %s on presentation context %i" % (echo_rq, presentation_context_id))

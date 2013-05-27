@@ -12,8 +12,8 @@ from twisted.test import proto_helpers
 from twisted.internet import protocol, error, task
 
 class DIMSETester(dimse.DIMSEProtocol):
-    def __init__(self, is_association_requestor):
-        super(DIMSETester, self).__init__(is_association_requestor)
+    def __init__(self):
+        super(DIMSETester, self).__init__()
         self.transport = proto_helpers.StringTransport()
         self.called_ae_title = "hej"
         self.calling_ae_title = "bla"
@@ -26,7 +26,7 @@ class DIMSETestCase(unittest.SynchronousTestCase):
     def test_send(self):
         """
         """
-        uls = DIMSETester(False)
+        uls = DIMSETester()
         uls.send_DIMSE_command(1, dimsemessages.C_ECHO_RQ())
         self.assertEqual(len(uls._sent), 1)
         self.assertEqual(len(uls._sent[0]), 1)

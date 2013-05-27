@@ -30,14 +30,13 @@ import glob
 
 class FindSCP(dimse.DIMSEProtocol):
     def __init__(self, folder):
-        super(FindSCP, self).__init__(is_association_requestor = False, 
-                                       supported_abstract_syntaxes = [
-                                           get_uid("Patient Root Query/Retrieve Information Model - FIND"),
-                                           get_uid("Study Root Query/Retrieve Information Model - FIND"),
-                                           get_uid("Patient/Study Only Query/Retrieve Information Model  - FIND"),
-                                           get_uid("Modality Worklist Information Model - FIND"),
-                                           get_uid("Verification SOP Class"),
-                                       ])
+        super(FindSCP, self).__init__(supported_abstract_syntaxes = [
+                                        get_uid("Patient Root Query/Retrieve Information Model - FIND"),
+                                        get_uid("Study Root Query/Retrieve Information Model - FIND"),
+                                        get_uid("Patient/Study Only Query/Retrieve Information Model  - FIND"),
+                                        get_uid("Modality Worklist Information Model - FIND"),
+                                        get_uid("Verification SOP Class"),
+                                      ])
         self.folder = folder
 
     def C_ECHO_RQ_received(self, presentation_context_id, echo_rq, dimse_data):

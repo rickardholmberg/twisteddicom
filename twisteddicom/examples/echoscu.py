@@ -32,8 +32,7 @@ dimse.do_log = True
 
 class EchoSCU(dimse.DIMSEProtocol):
     def __init__(self):
-        super(EchoSCU, self).__init__(is_association_requestor = True,
-                                      supported_abstract_syntaxes = [get_uid("Verification SOP Class")])
+        super(EchoSCU, self).__init__(supported_abstract_syntaxes = [get_uid("Verification SOP Class")])
         self.received_c_echo_rsp = False
 
     def A_ASSOCIATE_confirmation_accept_indicated(self, a_associate_ac):

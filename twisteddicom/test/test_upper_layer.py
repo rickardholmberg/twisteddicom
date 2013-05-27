@@ -14,8 +14,8 @@ from twisted.internet import protocol, error, task
 
 
 class DICOMUpperLayerServiceTester(upper_layer.DICOMUpperLayerServiceProvider):
-    def __init__(self, is_association_requestor):
-        upper_layer.DICOMUpperLayerServiceProvider.__init__(self, is_association_requestor,
+    def __init__(self):
+        upper_layer.DICOMUpperLayerServiceProvider.__init__(self,
                                                             supported_abstract_syntaxes = [get_uid("RT Plan Storage")])
         self._called_methods = []
         self.transport = proto_helpers.StringTransport()
@@ -126,8 +126,8 @@ class DICOMUpperLayerServiceTester(upper_layer.DICOMUpperLayerServiceProvider):
 
 
 class DICOMUpperLayerServiceStateMachineTester(upper_layer.DICOMUpperLayerServiceProvider):
-    def __init__(self, is_association_requestor):
-        super(DICOMUpperLayerServiceStateMachineTester, self).__init__(is_association_requestor)
+    def __init__(self):
+        super(DICOMUpperLayerServiceStateMachineTester, self).__init__()
         self._called_methods = []
 
     def do_AE_1(self):
@@ -387,7 +387,7 @@ class DICOMUpperLayerServiceProviderTestCase(unittest.SynchronousTestCase):
                 if not state_transitions[event].has_key(state):
                     continue
                 #print "%s - %s" % (event, state)
-                uls = DICOMUpperLayerServiceStateMachineTester(False)
+                uls = DICOMUpperLayerServiceStateMachineTester()
                 uls.state = state
                 uls.is_acceptable = lambda x: 3
                 indication_methods[event](uls)
@@ -406,7 +406,7 @@ class DICOMUpperLayerServiceProviderTestCase(unittest.SynchronousTestCase):
     def test_actions(self):
         for action, call, methods, messages in action_methods:
             #print "action:", action
-            uls = DICOMUpperLayerServiceTester(False)
+            uls = DICOMUpperLayerServiceTester()
             uls.makeConnection(uls.transport)
             call(uls)
             buf = uls.transport.value()

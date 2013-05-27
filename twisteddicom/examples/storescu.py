@@ -31,8 +31,7 @@ from twisted.internet.endpoints import TCP4ClientEndpoint
 
 class StoreSCU(dimse.DIMSEProtocol):
     def __init__(self, datasets, callback, progress_callback, priority = Priority.LOW, move_originator_application_entity_title = None, move_originator_message_id = None):
-        super(StoreSCU, self).__init__(is_association_requestor = True,
-                                       supported_abstract_syntaxes = list(set(ds.SOPClassUID for ds in datasets)),
+        super(StoreSCU, self).__init__(supported_abstract_syntaxes = list(set(ds.SOPClassUID for ds in datasets)),
                                        supported_transfer_syntaxes = list(set(ds.file_meta.TransferSyntaxUID for ds in datasets)))
         self.datasets = datasets
         self.callback = callback
